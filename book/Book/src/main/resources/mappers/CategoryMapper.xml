@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.green.book.dao.CategoryDAO">
+  
+  <select id="getLargeCategoryList" resultType="kr.green.book.vo.CategoryVO">
+  select * from large_category 
+  </select>
+  <select id="getMediumCategoryList" resultType="kr.green.book.vo.CategoryVO">
+  select * from medium_category  where me_la_code = #{code}
+  </select>
+  <select id="getSmallCategoryList" resultType="kr.green.book.vo.CategoryVO">
+  select * from small_category where sm_me_code = #{code}
+  </select>
+  <insert id="insetLargeCategory">
+  	insert into large_category(la_name) values(#{c.la_name})
+  </insert>
+  <insert id="insetMediumCategory">
+  	insert into medium_category(me_la_code, me_name) values(#{c.me_la_code}, #{c.me_name})
+  </insert>
+  <insert id="insetSmallCategory">
+  	insert into small_category(sm_me_code, sm_name) values(#{c.sm_me_code}, #{c.sm_name})
+  </insert>
+  
+</mapper>

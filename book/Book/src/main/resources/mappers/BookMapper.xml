@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.green.book.dao.BookDAO">
+	<insert id="insertBook">
+		insert into book 
+			(bo_isbn, bo_ca_code, bo_thum, bo_title, bo_publisher, bo_date,bo_price, bo_sale_price, 
+			bo_ea, bo_intro, bo_index,bo_author,bo_translator, bo_detail_page, bo_detail_size, 
+			bo_detail_weight) 
+		values
+			(#{bo.bo_isbn}, #{bo.bo_ca_code}, #{bo.bo_thum}, #{bo.bo_title}, #{bo.bo_publisher}, #{bo.bo_date},
+			#{bo.bo_price}, #{bo.bo_sale_price}, #{bo.bo_ea}, #{bo.bo_intro},#{bo.bo_index}, #{bo.bo_author}, #{bo.bo_translator},
+			#{bo.bo_detail_page},#{bo.bo_detail_size},#{bo.bo_detail_weight})
+	</insert>
+	<select id="selectBook" resultType="kr.green.book.vo.BookVO">
+			select * from book order by bo_isbn limit #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	<select id="selectTotalCount" resultType="int">
+			select count(*) from book
+	</select>
+	<select id="selectBookIsbn" resultType="kr.green.book.vo.BookVO">
+			select * from book
+			where bo_isbn = #{bo_isbn};
+	</select>
+	<select id="selectOrderBook" resultType="kr.green.book.vo.BookVO">
+		select * from book
+		where bo_isbn = #{bo.bo_isbn};
+	</select>
+	<insert id="insertBaskitBook">
+		insert into basket
+		(ba_me_id, ba_bo_isbn, ba_bo_front, ba_bo_title, ba_bo_price, ba_bo_sale_price, ba_ea) 
+		values (#{ba.ba_me_id}, #{ba.ba_bo_isbn}, #{ba.ba_bo_front}, #{ba.ba_bo_title}, #{ba.ba_bo_price}, #{ba.ba_bo_sale_price}, #{ba.ba_ea})
+	</insert>
+	<select id="selectBaskitList" resultType="kr.green.book.vo.BasketVO">
+		select * from basket
+		where ba_me_id = #{me.me_id};
+	</select>
+	<update id="updateBasket">
+		update basket
+		set ba_ea = #{ba.ba_ea}
+		where ba_me_id = #{ba.ba_me_id} and ba_bo_isbn = #{ba.ba_bo_isbn}
+	</update>
+	<delete id="deleteBasket">
+		delete from basket
+		where ba_me_id = #{ba.ba_me_id} and ba_bo_isbn = #{ba.ba_bo_isbn}
+	</delete>
+	<select id="selectFindBaskit" resultType="kr.green.book.vo.BasketVO">
+		select * from basket
+		where ba_me_id = #{ba.ba_me_id} and ba_bo_isbn = #{ba.ba_bo_isbn}
+	</select>
+	
+</mapper>
