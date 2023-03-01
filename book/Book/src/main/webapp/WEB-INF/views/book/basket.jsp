@@ -140,7 +140,7 @@
   	<input type="hidden" name="ba_me_id" value="${user.me_id}">
   </form>
   <!-- 주문 from -->
-  <form action ="/basket/order" method="get" class="order-form">
+  <form action ="/order" method="get" class="order-form">
  
   </form>
   
@@ -216,17 +216,17 @@
 					let ba_bo_isbn = $(this).find('.isbn').val();
 					let ba_ea = $(this).find('.ea').val();
 					
-					let isbn_input ='<input type="hidden" name="'+order_num +'" value="'+ba_bo_isbn+'">'
+					let isbn_input ='<input type="hidden" name="or_bo_isbn" value="'+ba_bo_isbn+'">'
 					form_contents += isbn_input
-					let ea_input ='<input type="hidden" name="'+order_num +'" value="'+ba_ea+'">'
+					let ea_input ='<input type="hidden" name="or_ea" value="'+ba_ea+'">'
 					form_contents += ea_input
 					
 					order_num ++ ;
 					console.log(order_num)
 				}
 			})
-			$('.order_form').html(form_contents)
-			$('.order_form').submit()
+			$('.order-form').html(form_contents)
+			$('.order-form').submit()
 		})
   })
   //종합정보(뷰 계산)

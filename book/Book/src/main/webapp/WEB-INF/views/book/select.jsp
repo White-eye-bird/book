@@ -152,8 +152,8 @@
           <a href="" class="btn-locker">보관함</a>
       </div>
       <form action="<c:url value="/order"></c:url>" method="get" id="book-form">	 
-			  <input type="hidden" name="bo_isbn" value="${b.bo_isbn}" >
-			  <input type="hidden"  name="bo_ea" value="1">
+			  <input type="hidden" name="or_bo_isbn" value="${b.bo_isbn}" >
+			  <input type="hidden" name="or_ea" value="1">
 		  </form>
     </div>
   </div>

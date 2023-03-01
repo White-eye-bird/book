@@ -8,6 +8,7 @@ import kr.green.book.pagination.Criteria;
 import kr.green.book.vo.BasketVO;
 import kr.green.book.vo.BookVO;
 import kr.green.book.vo.MemberVO;
+import kr.green.book.vo.OrderDetailVO;
 
 public interface BookDAO {
 
@@ -31,6 +32,8 @@ public interface BookDAO {
 
 	/*장바구니 중복검사*/
 	BasketVO selectFindBaskit(@Param("ba")BasketVO basket);
+
+	
 
 	
 
