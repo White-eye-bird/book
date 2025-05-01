@@ -9,6 +9,7 @@ import kr.green.book.vo.BasketVO;
 import kr.green.book.vo.BookVO;
 import kr.green.book.vo.MemberVO;
 import kr.green.book.vo.OrderDetailVO;
+import kr.green.book.vo.ReviewVO;
 
 public interface BookDAO {
 
@@ -16,7 +17,7 @@ public interface BookDAO {
 
 	ArrayList<BookVO> selectBook(@Param("cri") Criteria cri);
 
-	int selectTotalCount();
+	int selectTotalCount(@Param("cri") Criteria cri);
 
 	BookVO selectBookIsbn(String bo_isbn);
 
@@ -32,6 +33,13 @@ public interface BookDAO {
 
 	/*장바구니 중복검사*/
 	BasketVO selectFindBaskit(@Param("ba")BasketVO basket);
+
+	/*리뷰 등록*/
+	void reviewInsert(@Param("rv")ReviewVO review);
+
+	ArrayList<ReviewVO> selectReviewList(@Param("bo_isbn")String bo_isbn, @Param("cri") Criteria cri);
+
+	int selectTotalCountList(@Param("bo_isbn")String bo_isbn);
 
 	
 

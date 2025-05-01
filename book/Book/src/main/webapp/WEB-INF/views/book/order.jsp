@@ -11,14 +11,16 @@
 <script type="text/javascript">
 var IMP = window.IMP; // 생략가능
 IMP.init("imp78873511"); // <-- 본인 가맹점 식별코드 삽입
-
-function requestPay() {
+var name = '당근';// 임의 몇개 외 
+var amount = 30000;// 임의 자바스트립트 코드로 계산한값 
+	
+function requestPay() {	
 	IMP.request_pay({
 	  pg : 'html5_inicis.INIpayTest',//{PG사 코드값}.{PG사 상점아이디}
 	  pay_method : 'card',
 	  merchant_uid: "57008833-33004", 
-	  name : '당근 10kg',
-	  amount : 1004,
+	  name : name, //외 3건
+	  amount : amount,
 	  buyer_email : 'Iamport@chai.finance',
 	  buyer_name : '포트원 기술지원팀',
 	  buyer_tel : '010-1234-5678',
@@ -142,9 +144,9 @@ function requestPay() {
 	        </tr>
 	        <c:forEach items="${bookList}" var="b">
 		        <tr class="order-information">
-		          <td class="td-left">${b.bo_title}</td> 
-		          <td>${b.bo_price}</td> 
-		          <td>${b.bo_ea}</td>
+		          <td class="td-left">${b.or_title}</td> 
+		          <td>${b.or_pay}</td> 
+		          <td>${b.or_ea}</td>
 		        </tr>
 	        </c:forEach>
 	      </table>
@@ -170,9 +172,9 @@ function requestPay() {
 	        <tr>
 	          <th>주소</th> 
 	          <td>
-	          	<input type="text" id="sample6_postcode" name="sample6_postcode" placeholder="우편번호">
+	          	<input type="text" id="sample6_postcode" name="sample6_postcode" placeholder="우편번호" disabled>
 							<input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
-							<input type="text" id="sample6_address" name="sample6_address" placeholder="주소"><br>
+							<input type="text" id="sample6_address" name="sample6_address" placeholder="주소" disabled><br>
 							<input type="text" id="sample6_detailAddress" placeholder="상세주소">
 							<input type="text" id="sample6_extraAddress" placeholder="참고항목">
 	          </td>
@@ -232,11 +234,11 @@ function requestPay() {
 	        <span class="sp-pay" id="pay">자바스크립트</span>
 	      </div>
 	      <div class ="check" width="800px">
-	        <input type="checkbox"  name="" id="">(필수) 구매하실 상품의 결제정보를 확인하였으며, 구매진행에 동의합니다.
+	        <input type="checkbox"  name="check_agree" id="">(필수) 구매하실 상품의 결제정보를 확인하였으며, 구매진행에 동의합니다.
 	      </div>
 	    </div>
 	    <div class="btn-box" width="800px">
-	      <button class="payment-btn" onclick="requestPay()">결제하기</button>
+	      <button class="payment-btn">결제하기</button>
 	    </div>
     </div>
   </div>
@@ -339,6 +341,19 @@ function requestPay() {
 					$('[name=or_phone]').focus();
 					return;
 		  	}
+				//구매 방법 유효성 검사 라디오박스 선택되지 않으면
+				if(!$('[name=payment]').is(':checked')){
+			  	alert('결재 방법을 선택해주세요');
+			  	$('[name=payment]').first().focus();
+			  	return;
+		  	}
+				//체크 유효성검사 (구매진행되지 않으면 팝업창)
+			  if(!$('[name=check_agree]').is(':checked')){
+					alert('구매진행에 동의해주세요');
+					$('[name=check_agree]').focus();
+					return;
+		  	}
+			  requestPay();
 		  })//결제 클릭 이벤트 끝
 	  })// 문서의 끝
   </script>

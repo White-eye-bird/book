@@ -16,6 +16,7 @@ import kr.green.book.utils.UploadFileUtils;
 import kr.green.book.vo.BasketVO;
 import kr.green.book.vo.BookVO;
 import kr.green.book.vo.MemberVO;
+import kr.green.book.vo.ReviewVO;
 
 @Controller
 public class BookServiceImp implements BookService{
@@ -45,8 +46,11 @@ public class BookServiceImp implements BookService{
 	}
 
 	@Override
-	public int getTotalCount() {
-		return bookDao.selectTotalCount();
+	public int getTotalCount(Criteria cri) {
+		if(cri == null)
+			return 0;
+		return bookDao.selectTotalCount(cri);
+		
 	}
 
 	@Override
@@ -104,6 +108,42 @@ public class BookServiceImp implements BookService{
 		if(basket == null||basket.getBa_bo_isbn()==null||basket.getBa_me_id() == null)
 			return;
 		bookDao.deleteBasket(basket);
+	}
+
+	@Override
+	public String insertReviwe(ReviewVO review, MemberVO user) {
+		//유효성검사들
+		//유저 객체가 없어거나 아이디가 존재 안하면 리턴
+		if(user==null)
+			return "로그인한 사용자만 작성할 수 있습니다.";
+		//리뷰가 없으면 리턴
+		if(review==null||review.getRv_review()== null)
+			return "내용이 없습니다.";
+		//책정보가 없다면 리턴
+		if(review.getRv_bo_isbn()== null)
+			return "잘못된 도서 정보입니다. 리뷰를 작성할 수 없습니다. ";
+		//도서를 DB검색해서 있는지 확인하기
+		BookVO dbCheckBook = bookDao.selectBookIsbn(review.getRv_bo_isbn());
+		if(dbCheckBook == null || dbCheckBook.getBo_isbn().length() !=13)
+			return "잘못된 도서 정보입니다. 리뷰를 작성할 수 없습니다.";
+				
+		review.setRv_me_id(user.getMe_id());
+		bookDao.reviewInsert(review);
+
+		return "리뷰를 등록했습니다.";
+	}
+	/*책 리뷰 가져오기*/
+	@Override
+	public ArrayList<ReviewVO> getReview(String bo_isbn, Criteria cri) {
+		if(cri == null)
+			return null;
+		
+		return bookDao.selectReviewList(bo_isbn, cri);
+	}
+  /*페이지 네이션 구현, 페이지메이커 토탈 리뷰 개수 구하기 */
+	@Override
+	public int getTotalCountList(String bo_isbn) {
+		return bookDao.selectTotalCountList(bo_isbn);
 	}
 
 	

@@ -169,8 +169,8 @@ public class HomeController {
 	@RequestMapping(value="/list", method=RequestMethod.GET)
 	public ModelAndView listGet(ModelAndView mv, Criteria cri) {
 		cri.setPerPageNum(2);
+		int totalCount = bookService.getTotalCount(cri);
 		ArrayList<BookVO> list = bookService.getBookList(cri);
-		int totalCount = bookService.getTotalCount();
 		PageMaker pm = new PageMaker(totalCount, 5, cri);
 		mv.addObject("pm",pm);
 		mv.addObject("list",list);

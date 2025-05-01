@@ -62,16 +62,24 @@
   <div class="img-group">
     <a class="navbar-brand home" href="<c:url value="/"></c:url>"></a>
   </div>
-	<!--검색바-->  
+	<!--검색바(제목, 작가, 출판사)-->  
+	<form action="<c:url value="/list"></c:url>" method="GET">
   <div class="search-group">
-    <div class="input-group">
-      <input type="text" class="form-control" placeholder="Search">
+    <div class="input-group row">
+    	<select class="form-control col-3"  name="searchType">
+    		<option value="all">전체</option>
+    		<option value="bo_ca_code">카테고리</option>
+    		<option value="bo_title">제목</option>
+    		<option value="bo_author">작가</option>
+    		<option value="bo_publisher">출판사</option>
+    	</select>
+      <input type="text" class="form-control col-9" placeholder="Search" name="search">
       <div class="input-group-append">
         <button class="btn btn-primary" type="submit">검색</button>
       </div>
     </div>
   </div>
-
+	</form>
 	<!--상단 오른쪽 박스--> 
   <div class="right-box">
     <div class="login-signup">
@@ -108,7 +116,7 @@
 <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
   <ul class="navbar-nav">
     <li class="nav-item">
-      <a class="nav-link" href="<c:url value="/list"></c:url>" >도서</a>
+      <a class="nav-link" href="<c:url value="/list"></c:url>">도서</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="#">국내도서</a>

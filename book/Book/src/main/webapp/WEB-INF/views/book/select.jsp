@@ -13,13 +13,17 @@
   ul,ol,li{ list-style: none; }
   a{text-decoration: none;}
 
-  html, body{width: 100%; 
-  display: flex;
+ .app{
+  	display: flex;  /*이것떄문에 푸터 사이드로 이동함. 바디에 넣지 말고, 최상위 div를 만들어서 넣기.설정하기*/
     justify-content: center;
+    
+    
+
   }
 
   .container-top-level{
     width: 800px;
+    
   }
   .title{
     font-size: 26px;
@@ -109,9 +113,13 @@
     /*책소개 컬럼 혼자 따로 놀아서 공간 줌*/
     width: 800px;
   }
+  .rv_content, .btn-insert{
+  	display:block;
+  }
 </style>
 </head>
 <body>
+<div class="app">
 <div class="container-top-level">
   <div class="box">
     <div class="box-1">
@@ -187,10 +195,33 @@
       	  ${b.bo_index}
       </div>
     </div>  
+	  <!-- 댓글리스트 -->
+	  <div class="list-comment">
+	  	<div class="item-comment">
+	  		<div class="rv_me_id">작성자</div>
+	  		<div class="rv_review">내용</div>
+	  		<div class="rv_date">작성일</div>
+	  		<input value="1"><!-- 댓글 수정할떄 사용 -->
+	  	</div>
+	  </div>
+	  <!-- 페이지네이션 위치 -->
+	  <ul class="pagination justify-content-center"></ul>
+	  <!-- 댓글 입력창 -->
+	  <div="form-group mt-5">
+	  	<textarea class="form-control" name="rv_review"></textarea>
+	  </div>
+	  <div>
+	  	<button class="btn btn-outline-primary col-12 btn-insert">댓글등록</button>
+	  </div>
   </div>
-  
+</div>
 </div>
 <script type="text/javascript">
+	let criteria = {
+		page       : 1,
+		perPageNum : 5 //한페이지에 댓글 5개씩 보여줌
+	}
+	let bo_isbn='${b.bo_isbn}'
 	$(function(){
 		//전역변수
 		let ea = $('[name=bo_ea]').val();
@@ -279,9 +310,121 @@
       }
 	  });
 	}
+	$(function(){
+		$('.btn-insert').click(function(){
+			let rv_review = $('[name=rv_review]').val();
+			let rv_bo_isbn ='${b.bo_isbn}';
+			let obj={
+					rv_review:rv_review,
+					rv_bo_isbn:rv_bo_isbn
+			}
+			//리뷰 등록
+			$.ajax({
+	      async:true,
+	      type:'POST',
+	      data:JSON.stringify(obj),
+	      url:'<%=request.getContextPath()%>/ajax/review/insert',
+	      dataType:'json',
+	      contentType:'application/json; charset=UTF-8',
+	      success: function(data){
+	    	  alert(data.res);
+	    	  getReviewList(criteria, bo_isbn)
+	      }
+		  });	
+		})
+	})
+
+ //리뷰 리스트 
+	function getReviewList(cri,bo_isbn){
+		$.ajax({
+      async:true,
+      type:'POST',
+      data:JSON.stringify(cri),
+      url:'<%=request.getContextPath()%>/ajax/review/list/'+bo_isbn,
+      dataType:'json',
+      contentType:'application/json; charset=UTF-8',
+      success: function(data){
+    	  console.log(data);
+    	  let str='';
+    	  
+    	  for(rv of data.list){
+	    	  str+=
+	    		'<div class="item-comment">'+
+			  		'<div class="rv_me_id"><b>'+rv.rv_me_id+'</b></div>'+
+			  		'<div class="rv_review">'+rv.rv_review+'</div>'+
+			  		'<div class="rv_date">'+rv.rv_date_str+'</div>'+
+			  		'<input value="1" type=hidden >';//이거 나중에 히든으로 바꾸기 
+					//data.user &&을 추가함으로 서 로그인안해도 댓글리스트가 보임
+		  		if (data.user && rv.rv_me_id === data.user.me_id) { //버튼생성 하고 데이터 보내는것까지 확인해야하고 컨트롤러에서 작업해야함
+		  			str +=
+		  			'<div class="button-box" >'+
+		          '<button class="btn btn-outline-danger rv_modifiy">수정</button>'+
+		          '<button data-target="'+ rv.rv_num +'" class="btn btn-outline-success rv_delete">삭제</button>'+
+		      	'</div>';
+	  			}	
+		  		str += '</div>';
+    	  }
+    	  //댓글 삭제
+    	  //작동안함
+   	    $('.rv_delete').click(function(e){
+   	    	let rv_num = $(this).data('target');
+   	    	let comment ={
+   	    			co_num : rv_num
+   	    	}
+   	    }
+		   	// 상위 요소에 이벤트 위임 사용
+	   	 $(document).on('click', '.rv_delete', function(e) {
+	   	     e.preventDefault(); // 기본 동작 방지 (필요한 경우)
+	   	     let rv_num = $(this).attr('data-target'); 
+	   	     let comment = {
+	   	         co_num: rv_num
+	   	     };
+		   	 
+   	    	console.log(comment)
+   	    	ajaxPost (false, comment,'/ajax/comment/delete', commentDeleteSuccess)
+   	    });
+    	 
+    
+    	  $('.list-comment').html(str);
+    	  console.log(data.pm);// 댓글 리스트 페이지네이션 작업해야함 
+    	  let pm = data.pm;
+    	  let pmStr = ''; 
+      	if(pm.prev){
+      		pmStr +=
+        	'<li class="page-item">' +
+        		'<a class="page-link" href="javascript:#;" onclick="criteria.page='+(pm.startPage-1)+';getReviewList(criteria, bo_isbn)">이전</a>' +
+        	'</li>';
+      	}
+        for(let i = pm.startPage; i<=pm.endPage; i++){
+      	  let active = pm.cri.page == i ? 'active' : '';
+      	  pmStr +=
+        	'<li class="page-item '+active+'">'+
+        		'<a class="page-link" href="javascript:#;" onclick="criteria.page='+(i)+';getReviewList(criteria, bo_isbn)">'+ i +'</a>'+
+        	'</li>';
+        }
+        if(pm.next){
+      	  pmStr +=
+        	'<li class="page-item">' + 
+        		'<a class="page-link" href="javascript:#;" onclick="criteria.page='+(pm.endPage+1)+';getReviewList(criteria, bo_isbn)">다음</a>' + 
+        	'</li>';
+        }
+        $('.pagination').html(pmStr);
+      }
+		});
+	}
+	getReviewList(criteria, bo_isbn)
 	
-	
-	
+
+	function CommentDeleteSuccess(data){
+		//삭제가 성공
+		if(data.res === 1){
+			alert('댓글이 삭제되었습니다.');	
+		//삭제가 실패
+		}else{
+			alert('댓글 삭제에 실패했습니다. 다시 시도해주세요.');	
+		}	
+	}
+
 </script>
 </body>
 </html>

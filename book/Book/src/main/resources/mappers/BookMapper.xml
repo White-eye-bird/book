@@ -14,10 +14,25 @@
 			#{bo.bo_detail_page},#{bo.bo_detail_size},#{bo.bo_detail_weight})
 	</insert>
 	<select id="selectBook" resultType="kr.green.book.vo.BookVO">
-			select * from book order by bo_isbn limit #{cri.pageStart}, #{cri.perPageNum}
+			select * from book 
+				<if test="cri.searchType == 'all'">
+				where (bo_title like concat('%', #{cri.search} ,'%') or bo_author like concat('%',#{cri.search},'%') or bo_publisher like concat('%',#{cri.search},'%'))
+				</if>
+				<if test="cri.searchType != 'all'">
+				where ${cri.searchType} like concat('%',#{cri.search},'%')
+				</if>
+				order by bo_isbn desc 
+				limit #{cri.pageStart}, #{cri.perPageNum}
 	</select>
 	<select id="selectTotalCount" resultType="int">
-			select count(*) from book
+			select count(*) from book 
+				<if test="cri.searchType == 'all'">
+				where (bo_title like concat('%', #{cri.search} ,'%') or bo_author like concat('%',#{cri.search},'%') or bo_publisher like concat('%',#{cri.search},'%'))
+				</if>
+				<if test="cri.searchType != 'all'">
+				where ${cri.searchType} like concat('%',#{cri.search},'%')
+				</if>
+			
 	</select>
 	<select id="selectBookIsbn" resultType="kr.green.book.vo.BookVO">
 			select * from book
@@ -48,6 +63,25 @@
 	<select id="selectFindBaskit" resultType="kr.green.book.vo.BasketVO">
 		select * from basket
 		where ba_me_id = #{ba.ba_me_id} and ba_bo_isbn = #{ba.ba_bo_isbn}
+	</select>
+	<!--리뷰 등록 쿼리-->
+	<!-- book 테이블에서 bo_title을 조회하여 review 테이블에 삽입합니다. -->
+	<insert id="reviewInsert">
+		insert into review 
+		(rv_me_id, rv_review, rv_rating, rv_bo_isbn, rv_title)
+		select #{rv.rv_me_id},#{rv.rv_review},#{rv.rv_rating},#{rv.rv_bo_isbn}, bo_title
+		from book
+		where bo_isbn = #{rv.rv_bo_isbn}
+	</insert>
+	<select id="selectReviewList" resultType="kr.green.book.vo.ReviewVO"><!--여기서 오류남-->
+	select * from review
+		where rv_bo_isbn = #{bo_isbn} order by rv_num desc
+		limit #{cri.pageStart}, #{cri.perPageNum}
+	
+	</select>
+	<select id="selectTotalCountList" resultType="int">
+	select count(*) from review
+		where rv_bo_isbn = #{bo_isbn} 
 	</select>
 	
 </mapper>

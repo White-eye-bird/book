@@ -103,20 +103,24 @@
   <ul class="pagination">
   	<c:if test="${pm.prev}">
     	<li class="page-item">
-    		<a class="page-link" href="<c:url value="/list?page=${pm.startPage-1}"></c:url>">이전</a>
+    		<a class="page-link" href="<c:url value="/list?page=${pm.startPage-1}&searchType=${pm.cri.searchType}&search=${pm.cri.search}"></c:url>">이전</a>
    		</li>
     </c:if>
     <c:forEach begin="${pm.startPage}" end="${pm.endPage}" var="i">
     	<li class="page-item <c:if test="${pm.cri.page == i}">active</c:if>">
-    		<a class="page-link" href="<c:url value="/list?page=${i}"></c:url>">${i}</a>
+    		<a class="page-link" href="<c:url value="/list?page=${i}&searchType=${pm.cri.searchType}&search=${pm.cri.search}"></c:url>">${i}</a>
     	</li>
     </c:forEach>
     <c:if test="${pm.next}">
     	<li class="page-item">
-    		<a class="page-link" href="<c:url value="/list?page=${pm.endPage+1}"></c:url>">다음</a>
+    		<a class="page-link" href="<c:url value="/list?page=${pm.endPage+1}&searchType=${pm.cri.searchType}&search=${pm.cri.search}"></c:url>">다음</a>
     	</li>
     </c:if>
   </ul>
 </div>
+<script type="text/javascript">
+let check='${pm}'
+console.log(check)
+</script>
 </body>
 </html>

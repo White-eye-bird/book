@@ -9,6 +9,7 @@ import kr.green.book.vo.BasketVO;
 import kr.green.book.vo.BookVO;
 import kr.green.book.vo.MemberVO;
 import kr.green.book.vo.OrderVO;
+import kr.green.book.vo.ReviewVO;
 
 public interface BookService {
 
@@ -16,7 +17,7 @@ public interface BookService {
 
 	ArrayList<BookVO> getBookList(Criteria cri);
 
-	int getTotalCount();
+	int getTotalCount(Criteria cri);
 
 	BookVO selectBook(String bo_isbn);
 
@@ -27,6 +28,12 @@ public interface BookService {
 	void updateBaskitBook(BasketVO basket);
 
 	void deleteBaskitBook(BasketVO basket);
+
+	String insertReviwe(ReviewVO review, MemberVO user);
+
+	ArrayList<ReviewVO> getReview(String bo_isbn, Criteria cri);
+
+	int getTotalCountList(String bo_isbn);
 	
 	
 

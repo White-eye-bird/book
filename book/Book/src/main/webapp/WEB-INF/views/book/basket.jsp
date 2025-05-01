@@ -139,9 +139,9 @@
   	<input type="hidden" name="ba_ea">
   	<input type="hidden" name="ba_me_id" value="${user.me_id}">
   </form>
-  <!-- 주문 from -->
-  <form action ="/order" method="get" class="order-form">
- 
+  <!-- 주문 from (체크된 상품들이 추가됨)-->
+  <form action ="<c:url value="/order"></c:url>" method="post" class="order-form">
+ 	
   </form>
   
   <script type="text/javascript">
@@ -159,7 +159,10 @@
 	  })
 	  $('.btn-down').click(function(){
 	  	let ea = $(this).parent().find('input').val();
-	  	$(this).parent().find('input').val(--ea);
+	  	if (ea>1)
+	  		$(this).parent().find('input').val(--ea);
+	  	else
+	  		alert('최소한 1개 이상의 수량이 필요합니다. 다시 설정해주세요.')
 	  })
 	  // 수량 변경 버튼
 	  $('.btn-modify').click(function(e){
@@ -196,6 +199,7 @@
 				$('.select-checkbox').prop('checked',true)
 			else
 				$('.select-checkbox').prop('checked',false)
+			setTotalInfo()
 		})
 		//하위 체크박스가 모두 선택되면 전체선택
 		$('.select-checkbox').click(function(){
@@ -205,24 +209,23 @@
 				$('.checkbox-all').prop('checked', true)
 			else
 				$('.checkbox-all').prop('checked', false)
+			setTotalInfo();
 		})
 		$('.btn-order').click(function(){
 			//체크된 데이터(isbn이랑 수량 아이디 보냄)
 			let form_contents =''
 			let order_num = 0;
-			
 			$('.td-basket-info').each(function(index, element){
 				if($(this).find('.select-checkbox').is(':checked')){
 					let ba_bo_isbn = $(this).find('.isbn').val();
 					let ba_ea = $(this).find('.ea').val();
 					
-					let isbn_input ='<input type="hidden" name="or_bo_isbn" value="'+ba_bo_isbn+'">'
+					let isbn_input ='<input type="hidden" name="orders['+order_num+'].or_bo_isbn" value="'+ba_bo_isbn+'">'
 					form_contents += isbn_input
-					let ea_input ='<input type="hidden" name="or_ea" value="'+ba_ea+'">'
+					let ea_input ='<input type="hidden" name="orders['+order_num+'].or_ea" value="'+ba_ea+'">'
 					form_contents += ea_input
 					
 					order_num ++ ;
-					console.log(order_num)
 				}
 			})
 			$('.order-form').html(form_contents)
@@ -250,7 +253,7 @@
     $('.finalTotaPrice').text(finalTotalPrice + '원')
   }
 	  
-  
+  //수량변경등 비동기
   function ajaxPost(async, dataObj, url, success) {
 		$.ajax({
       async:async,
